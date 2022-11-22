@@ -103,10 +103,12 @@ export default function Home() {
   const { data } = useQuery(mostRecentQuery, {
     onCompleted: (data) => setGraphData(formatData(data)),
   });
+  console.info("data: ",data)
   const [loadMoreArticles, { called, loading, data: newData }] = useLazyQuery(
     moreArticlesQuery,
     {
       onCompleted: (data) => {
+        console.info("new data: ",data)
         const newSubgraph = formatData(data);
         setGraphData({
           nodes: _.uniqBy([...graphData.nodes, ...newSubgraph.nodes], "id"),
@@ -167,6 +169,38 @@ export default function Home() {
             node.y - bckgDimensions[1] / 2,
             ...bckgDimensions
           );
+      }}
+      onBackgroundClick={(event) => {
+        console.info("bg click", event)
+        const random_article = Math.floor(Math.random() * 100);
+        const random_user = Math.floor(Math.random() * 100);
+        const random_tag = Math.floor(Math.random() * 100);
+        const newData = {
+          articles: [
+            {
+              id: `add_article${random_article}`,
+              url: "https://teamaround.notion.site/How-To-Use-Workspaces-Beta-e280bdbbabfc4b7aa5db2f3e74d83e10",
+              __typename: "Article",
+              title: `sample_article${random_article}`,
+              user: {
+                username: `sample_user${random_user}`,
+                avatar: "https://ca.slack-edge.com/T01KP8N13EF-U01L1M32R7T-d601688eb306-512",
+                __typename: "User"
+              },
+              tags: [
+                {
+                  name: `sample_tag${random_tag}`,
+                  __typename: "Tag"
+                }
+              ]
+            }
+          ],
+        }
+        const newSubgraph = formatData(newData);
+        setGraphData({
+          nodes: _.uniqBy([...graphData.nodes, ...newSubgraph.nodes], "id"),
+          links: [...graphData.links, ...newSubgraph.links],
+        });
       }}
     />
   );
