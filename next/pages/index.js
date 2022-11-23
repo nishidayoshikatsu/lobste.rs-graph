@@ -118,13 +118,34 @@ export default function Home() {
     }
   );
 
+  const updateGraphData = (newData) => {
+    console.info("before data: ", graphData.nodes)
+    const newSubgraph = formatData(newData);
+    setGraphData({
+      nodes: _.uniqBy([...graphData.nodes, ...newSubgraph.nodes], "id"),
+      links: [...graphData.links, ...newSubgraph.links],
+    });
+    console.info("after data: ", graphData.nodes)
+  };
+
+  const rename = (nodeOrLink, type) => {
+    console.info("rename", nodeOrLink, type);
+    const value = prompt('Name this ' + type + ':', nodeOrLink.title);
+    if (!value) {
+      return;
+    }
+    nodeOrLink.title = value;
+    updateGraphData(nodeOrLink);
+  };
+
   return (
     <NoSSRForceGraph
       nodeAutoColorBy={"__typename"}
       nodeLabel={"id"}
       graphData={graphData}
       onNodeClick={(node, event) => {
-        console.log(node);
+        console.log("click node: ", node);
+        rename(node, 'node')
         if (node.__typename === "Tag") {
           loadMoreArticles({ variables: { tag: node.id } });
         } else if (node.__typename === "Article") {
