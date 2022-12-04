@@ -66,12 +66,16 @@ const formatData = (data) => {
       url: a.url,
       __typename: a.__typename,
       title: a.title,
+      x: a.x,
+      y: a.y
     });
 
     nodes.push({
       id: a.user.username,
       avatar: a.user.avatar,
       __typename: a.user.__typename,
+      x: a.x + 5,
+      y: a.y + 5
     });
 
     links.push({
@@ -83,6 +87,8 @@ const formatData = (data) => {
       nodes.push({
         id: t.name,
         __typename: t.__typename,
+        x: a.x - 5,
+        x: a.y - 5
       });
 
       links.push({
@@ -207,6 +213,8 @@ export default function Home() {
               url: "https://teamaround.notion.site/How-To-Use-Workspaces-Beta-e280bdbbabfc4b7aa5db2f3e74d83e10",
               __typename: "Article",
               title: `sample_article${random_article}`,
+              x: coords.x,
+              y: coords.y,
               user: {
                 username: `sample_user${random_user}`,
                 avatar: "https://ca.slack-edge.com/T01KP8N13EF-U01L1M32R7T-d601688eb306-512",
