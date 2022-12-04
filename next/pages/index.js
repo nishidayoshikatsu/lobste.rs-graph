@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { useQuery, useLazyQuery, gql } from "@apollo/client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import _ from "lodash";
 
 const mostRecentQuery = gql`
@@ -99,6 +99,7 @@ const formatData = (data) => {
 };
 
 export default function Home() {
+  const graphRef = useRef(null);
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const { data } = useQuery(mostRecentQuery, {
     onCompleted: (data) => setGraphData(formatData(data)),
@@ -140,6 +141,7 @@ export default function Home() {
 
   return (
     <NoSSRForceGraph
+      graphRef={graphRef}
       nodeAutoColorBy={"__typename"}
       nodeLabel={"id"}
       graphData={graphData}
@@ -193,6 +195,8 @@ export default function Home() {
       }}
       onBackgroundClick={(event) => {
         console.info("bg click", event)
+        const coords = graphRef.current.screen2GraphCoords(event.layerX, event.layerY)
+        console.info("coords", coords)
         const random_article = Math.floor(Math.random() * 100);
         const random_user = Math.floor(Math.random() * 100);
         const random_tag = Math.floor(Math.random() * 100);
